@@ -19,7 +19,7 @@ Currently supported modalities are:
 * psycho-physiological data (heart rate, respiration)
 * fMRI data (via nipy)
 
-For more information, see the paper or watch the video below.
+For more information, see the paper or watch the video below. Keep in mind that this is an early prototype and not a mature tool.
 
 ## Demo Video
 
@@ -29,9 +29,19 @@ For more information, see the paper or watch the video below.
 
 If you want to try out CodersMUSE, clone the repository. Besides the python scripts, it comes with some sample data located in `/sample`. Currently, the full-brain fMRI data cannot be shared on this public repository due to German privacy regulations. Please contact us if you would like to access a sample fMRI data set.
 
-### Preprocessing Your Own Data
+### Using Your Own Data
 
-If you want to explore your own experiment data, make sure to preprocess your data in a way CodersMUSE can handle the data.
+If you want to explore your own experiment data, make sure to preprocess and prepare your data in a way that is compatible to CodersMUSE's expectation. This first prototype is rather inflexible when it comes to input data.
+
+The data should be in `.csv` files. One file each for behavioral, eye-tracking, and psycho-physiological data. The `.csv` files should be:
+
+* Comma-separated
+* Be aligned to one common `Time` column
+* Time resolution is in hundreds of a second
+* Use the same column naming as the sample files (see `/sample/data`)
+* Already be preprocessed, if necessary (e.g., smoothing)
+
+If you encounter problems, please let us know.
 
 ## License
 
