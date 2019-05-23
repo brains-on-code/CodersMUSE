@@ -3,4 +3,6 @@ pandas
 matplotlib
 nibabel
 numpy
+scipy
+sklearn
 PySide2
