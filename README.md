@@ -4,6 +4,7 @@
 
 See more details in our [submitted ICPC tool track paper](docs/ICPCToolPaperUnderReview.pdf). Alternatively, watch our short [demo video [2m:03s]](https://youtu.be/Qc_FWHTVM0w).
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/31c1e9e9bcf740e89e45b0920541e35d)](https://app.codacy.com/gh/brains-on-code/CodersMUSE?utm_source=github.com&utm_medium=referral&utm_content=brains-on-code/CodersMUSE&utm_campaign=Badge_Grade_Dashboard)
 [![Build Status](https://travis-ci.com/brains-on-code/CodersMUSE.svg?branch=master)](https://travis-ci.com/brains-on-code/CodersMUSE)
 
 ## Abstract
