@@ -4,7 +4,7 @@
 
 See more details in our [ICPC tool track paper](docs/ICPC2019Tool.pdf). Alternatively, watch our short [demo video [2m:03s]](https://youtu.be/Qc_FWHTVM0w).
 
-![Tests](https://github.com/brains-on-code/CodersMUSE/workflows/Tests/badge.svg)
+![Tests](https://github.com/brains-on-code/CodersMUSE/workflows/Tests/badge.svg) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/31c1e9e9bcf740e89e45b0920541e35d)](https://app.codacy.com/gh/brains-on-code/CodersMUSE?utm_source=github.com&utm_medium=referral&utm_content=brains-on-code/CodersMUSE&utm_campaign=Badge_Grade_Dashboard)
 
 ## Abstract
 Program comprehension is a central cognitive process in programming and has been in the focus of researchers for decades, but is still not thoroughly unraveled. Multi-modal measurement methods are a way to gain a more holistic understanding of program comprehension. However, there is no proper tool support that lets researchers explore synchronized, conjoint multi-modal data, specifically designed for the needs in software engineering. In this paper, we present CodersMUSE, a prototype implementation that aims to satisfy this crucial need.
