@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - tbd.
 
-## [0.1.0] - 2019-02-18 - Hello World
+### [0.1.1] - 2020-04-09
+- Fixed some start issues with default settings and an initialized project
+- Switched from travis to GitHub actions 
+
+### [0.1.0] - 2019-02-18 - Hello World
 
 Initial release of prototype for submission at ICPC tool track.

@@ -1,8 +1,0 @@
-language: python
-python:
-  - "3.6"
-  - "3.7-dev"  # 3.7 development branch
-install:
-  - pip install -r requirements.txt
-script: echo foo
-#  - pytest
