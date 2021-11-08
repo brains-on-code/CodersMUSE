@@ -1,0 +1,48 @@
+cff-version: 1.2.0
+message: "If you use our software, please cite it as below."
+authors:
+- family-names: "Peitek"
+  given-names: "Norman"
+  orcid: "https://orcid.org/0000-0001-7828-4558"
+- family-names: "Apel"
+  given-names: "Sven"
+  orcid: "https://orcid.org/0000-0003-3687-2233"
+- family-names: "Brechmann"
+  given-names: "André"
+  orcid: "https://orcid.org/0000-0003-3903-0840"
+- family-names: "Parnin"
+  given-names: "Chris"
+  orcid: "https://orcid.org/0000-0001-6182-815X"
+- family-names: "Siegmund"
+  given-names: "Janet"
+  orcid: "https://orcid.org/0000-0002-5815-266X"
+title: "CodersMUSE: Multi-Modal Data Exploration of Program-Comprehension Experiments"
+version: 1.0.0
+doi: 10.1109/ICPC.2019.00027
+date-released: 2019-05-28
+url: "https://github.com/brains-on-code/CodersMUSE"
+preferred-citation:
+  type: proceedings
+  authors:
+  - family-names: "Peitek"
+    given-names: "Norman"
+    orcid: "https://orcid.org/0000-0001-7828-4558"
+  - family-names: "Apel"
+    given-names: "Sven"
+    orcid: "https://orcid.org/0000-0003-3687-2233"
+  - family-names: "Brechmann"
+    given-names: "André"
+    orcid: "https://orcid.org/0000-0003-3903-0840"
+  - family-names: "Parnin"
+    given-names: "Chris"
+    orcid: "https://orcid.org/0000-0001-6182-815X"
+  - family-names: "Siegmund"
+    given-names: "Janet"
+    orcid: "https://orcid.org/0000-0002-5815-266X"
+  doi: "10.1109/ICPC.2019.00027"
+  conference: "International Conference on Program Comprehension (ICPC)"
+  month: 5
+  start: 126 # First page number 
+  end: 129 # Last page number
+  title: "CodersMUSE: Multi-Modal Data Exploration of Program-Comprehension Experiments"
+  year: 2019
