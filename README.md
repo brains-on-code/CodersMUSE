@@ -2,7 +2,9 @@
 
 ![Annotated Screenshot of CodersMUSE](docs/Screenshot.png)
 
-See more details in our [ICPC tool track paper](docs/ICPC2019Tool.pdf). Alternatively, watch our short [demo video [2m:03s]](https://youtu.be/Qc_FWHTVM0w).
+See more details in our ICPC tool track paper: Norman Peitek und Sven Apel und André Brechmann und Chris Parnin und Janet Siegmund, CodersMUSE: Multi-Modal Data Exploration of Program-Comprehension Experiments, Proceedings of the International Conference on Program Comprehension (ICPC) ([preprint](docs/ICPC2019Tool.pdf), [digital library](https://dl.acm.org/doi/10.1109/ICPC.2019.00027))
+
+You can also watch our short [demo video [2m:03s]](https://youtu.be/Qc_FWHTVM0w).
 
 ![Tests](https://github.com/brains-on-code/CodersMUSE/workflows/Tests/badge.svg) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/31c1e9e9bcf740e89e45b0920541e35d)](https://app.codacy.com/gh/brains-on-code/CodersMUSE?utm_source=github.com&utm_medium=referral&utm_content=brains-on-code/CodersMUSE&utm_campaign=Badge_Grade_Dashboard)
 
