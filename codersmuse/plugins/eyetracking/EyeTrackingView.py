@@ -1,9 +1,9 @@
 import logging
 import os
 
-from PySide2 import QtWidgets, QtGui
-from PySide2.QtGui import QPixmap, QColor
-from PySide2.QtWidgets import QLabel
+from PySide6 import QtWidgets, QtGui
+from PySide6.QtGui import QPixmap, QColor
+from PySide6.QtWidgets import QLabel
 
 from codersmuse import config
 
@@ -49,7 +49,7 @@ class EyeTrackingOverlay(QtWidgets.QWidget):
         logging.debug('eyetracking view: calculated image height: %s', calculated_height)
         logging.debug('eyetracking view: image path: %s', imagePath)
 
-        self.image = QPixmap.fromImage(imagePath)
+        self.image = QPixmap(imagePath)
         original_size = self.image.size()
 
         self.image = self.image.scaledToWidth(calculated_width)

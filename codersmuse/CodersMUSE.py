@@ -6,17 +6,16 @@ import sys
 import matplotlib
 
 # Make sure that we are using QT5 for matplotlibs
-from codersmuse.plugins.eeg import EegData
-
-matplotlib.use('Qt5Agg')
+#matplotlib.use('Qt5Agg')
 
 import pandas as pd
-from PySide2 import QtWidgets, QtCore
-from PySide2.QtGui import QIcon
-from PySide2.QtWidgets import (QAction, QApplication, QMainWindow, QMessageBox)
+from PySide6 import QtWidgets, QtCore
+from PySide6.QtGui import (QAction, QIcon)
+from PySide6.QtWidgets import (QApplication, QMainWindow, QMessageBox)
 
 from codersmuse.plugins.behavioral import BehavioralView
 from codersmuse.plugins.eyetracking import EyeTrackingData
+from codersmuse.plugins.eeg import EegData
 from codersmuse.plugins.fmri import fMRIData
 from codersmuse.plugins.psychophysio import PsychoPhysiologicalData
 from codersmuse.DataExplorationView import DataView

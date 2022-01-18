@@ -1,8 +1,8 @@
 import math
 
-from PySide2 import QtGui, QtCore, QtWidgets
-from PySide2.QtCore import Qt, QTimer
-from PySide2.QtWidgets import QWidget, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QMessageBox, QComboBox
+from PySide6 import QtGui, QtCore, QtWidgets
+from PySide6.QtCore import Qt, QTimer
+from PySide6.QtWidgets import QWidget, QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QMessageBox, QComboBox
 
 from codersmuse import config
 from codersmuse.plugins.behavioral.BehavioralView import BehavioralView
@@ -222,8 +222,9 @@ class DataView(QWidget):
             self.eyetrackingView.setTime(self.time)
 
             # eeg data
-            self.eegView.update_text(self.condition_dataframe['eeg'][self.time])
-            self.eegView.update_plot(self.time)
+            if config.PLUGIN_EEG_ACTIVE:
+                self.eegView.update_text(self.condition_dataframe['eeg'][self.time])
+                self.eegView.update_plot(self.time)
 
             # fMRI data
             current_scan = math.floor(((self.condition_start_pos + self.time) / 100) * config.FMRI_RESOLUTION)

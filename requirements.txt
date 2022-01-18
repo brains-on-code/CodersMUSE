@@ -5,4 +5,4 @@ nibabel
 numpy
 scipy
 sklearn
-PySide2
+PySide6

@@ -1,7 +1,7 @@
 import os
 
-from PySide2 import QtGui
-from PySide2.QtWidgets import QLabel
+from PySide6 import QtGui
+from PySide6.QtWidgets import QLabel
 
 
 class EegView:

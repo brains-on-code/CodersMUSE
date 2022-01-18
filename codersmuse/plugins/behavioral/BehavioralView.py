@@ -1,8 +1,8 @@
 import math
 
 import pandas as pd
-from PySide2 import QtGui, QtCore
-from PySide2.QtWidgets import QHBoxLayout, QLabel
+from PySide6 import QtGui, QtCore
+from PySide6.QtWidgets import QHBoxLayout, QLabel
 
 
 class BehavioralView:
