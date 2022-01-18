@@ -9,8 +9,8 @@ from nilearn import plotting
 
 from codersmuse import config
 
-OVERWRITE_ROI_PLOTS = False
-OVERWRITE_EPI_PLOTS = False
+OVERWRITE_ROI_PLOTS = False  # True
+OVERWRITE_EPI_PLOTS = False  # True
 MAXIMUM_EPI_PLOTS = 75
 
 
