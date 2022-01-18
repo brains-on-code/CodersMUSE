@@ -108,7 +108,7 @@ class EyeTrackingOverlay(QtWidgets.QWidget):
         )
 
         for i in range(first_element, last_element):
-            if self.saccades.index.contains(i):
+            if i in self.saccades.index:
                 path.lineTo(
                     self.scale_factor * self.saccades['EyeTracking_X'][i],
                     self.scale_factor * self.saccades['EyeTracking_Y'][i]
@@ -121,7 +121,7 @@ class EyeTrackingOverlay(QtWidgets.QWidget):
         painter.setPen(fixation_pen)
 
         for i in range(first_element, last_element):
-            if self.fixations.index.contains(i):
+            if i in self.fixations.index:
                 painter.drawEllipse(
                     self.scale_factor * self.fixations['EyeTracking_X'][i],
                     self.scale_factor * self.fixations['EyeTracking_Y'][i],

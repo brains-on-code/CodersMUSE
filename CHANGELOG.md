@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
-- tbd.
+- Fixed issues with newer library versions
 
 ### [0.1.1] - 2020-04-09
 - Fixed some start issues with default settings and an initialized project
