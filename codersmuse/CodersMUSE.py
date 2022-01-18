@@ -6,6 +6,8 @@ import sys
 import matplotlib
 
 # Make sure that we are using QT5 for matplotlibs
+from codersmuse.plugins.eeg import EegData
+
 matplotlib.use('Qt5Agg')
 
 import pandas as pd
@@ -37,6 +39,7 @@ class MainWindow(QMainWindow):
                 behavioral_file=os.path.join(os.path.dirname(__file__), '..', 'sample', 'data', 'p01_behavioral.csv'),
                 eyetracking_file=os.path.join(os.path.dirname(__file__), '..', 'sample', 'data', 'p01_eyetracking.csv'),
                 physio_file=os.path.join(os.path.dirname(__file__), '..', 'sample', 'data', 'p01_physio.csv'),
+                eeg_file=os.path.join(os.path.dirname(__file__), '..', 'sample', 'data', 'p01_eeg.csv'),  # TODO change to real EEG data once available
                 fmri_roi_file=os.path.join(os.path.dirname(__file__), '..', 'sample', 'data', 'p01_roi.csv'),
                 fmri_nifti_file=os.path.join(os.path.dirname(__file__), '..', 'sample', 'data', 'p01.nii')
             )
@@ -80,10 +83,15 @@ class MainWindow(QMainWindow):
             return
         self.check_file(eyetracking_data_file)
 
-        physio_data_file = QtWidgets.QFileDialog.getOpenFileName(self, "Open Phsyio File", QtCore.QDir.currentPath(), "CSV Files (*.csv)")[0]
+        physio_data_file = QtWidgets.QFileDialog.getOpenFileName(self, "Open Physio File", QtCore.QDir.currentPath(), "CSV Files (*.csv)")[0]
         if not physio_data_file:
             return
         self.check_file(physio_data_file)
+
+        eeg_data_file = QtWidgets.QFileDialog.getOpenFileName(self, "Open EEG File", QtCore.QDir.currentPath(), "CSV Files (*.csv)")[0]
+        if not eeg_data_file:
+            return
+        self.check_file(eeg_data_file)
 
         fmri_roi_file = QtWidgets.QFileDialog.getOpenFileName(self, "Open fMRI ROI File", QtCore.QDir.currentPath(), "CSV Files (*.csv)")[0]
         if not fmri_roi_file:
@@ -95,7 +103,7 @@ class MainWindow(QMainWindow):
             return
         self.check_file(fmri_nifti_file)
 
-        self.prepare_and_display_data(behavioral_data_file, eyetracking_data_file, physio_data_file, fmri_roi_file, fmri_nifti_file)
+        self.prepare_and_display_data(behavioral_data_file, eyetracking_data_file, physio_data_file, eeg_file, fmri_roi_file, fmri_nifti_file)
 
     def check_file(self, selected_file):
         in_file = QtCore.QFile(selected_file)
@@ -104,15 +112,17 @@ class MainWindow(QMainWindow):
                                           "Open Data File",
                                           "Cannot read file %s:\n%s." % (selected_file, in_file.errorString()))
 
-    def prepare_and_display_data(self, behavioral_file, eyetracking_file, physio_file, fmri_roi_file, fmri_nifti_file, participant='p01'):
+    def prepare_and_display_data(self, behavioral_file, eyetracking_file, physio_file, eeg_file, fmri_roi_file, fmri_nifti_file, participant='p01'):
         # TODO allow optional data files
         # merge csv files into one dataframe
         df_behavioral = pd.read_csv(behavioral_file, sep=',')
         df_eyetracking = pd.read_csv(eyetracking_file, sep=',')
         df_physio = pd.read_csv(physio_file, sep=',')
+        df_eeg = pd.read_csv(eeg_file, sep=',')
 
         df_merged = df_behavioral.merge(df_eyetracking, on='Time', how='left')
         df_merged = df_merged.merge(df_physio, on='Time', how='left')
+        df_merged = df_merged.merge(df_eeg, on='Time', how='left')
 
         print(df_merged.head(5))
 
@@ -138,6 +148,9 @@ class MainWindow(QMainWindow):
 
         if config.PLUGIN_PHYSIO_ACTIVE:
             PsychoPhysiologicalData.preprocess_psychophysio_data(self.experiment_data)
+
+        if config.PLUGIN_EEG_ACTIVE:
+            EegData.preprocess_eeg_data(self.experiment_data)
 
         if config.PLUGIN_FMRI_ACTIVE:
             fMRIData.preprocess_fMRI_ROI(self.experiment_data)

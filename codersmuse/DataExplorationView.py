@@ -6,6 +6,7 @@ from PySide2.QtWidgets import QWidget, QHBoxLayout, QLabel, QPushButton, QVBoxLa
 
 from codersmuse import config
 from codersmuse.plugins.behavioral.BehavioralView import BehavioralView
+from codersmuse.plugins.eeg.EegView import EegView
 from codersmuse.plugins.eyetracking.EyeTrackingView import EyeTrackingView
 from codersmuse.plugins.fmri.fMRIFullView import fMRIFullView
 from codersmuse.plugins.fmri.fMRIRoiView import fMRIRoiView
@@ -33,6 +34,7 @@ class DataView(QWidget):
         self.physioPupilDilation = PsychoPhysiologicalView('PupilDilation')
         self.fMRIRoiView = fMRIRoiView()
         self.fMRIFullView = fMRIFullView()
+        self.eegView = EegView('ch1')
 
         self.create_layout()
 
@@ -139,6 +141,16 @@ class DataView(QWidget):
             self.fMRIRoiView.create_view(right_layout, self.experiment_data)
             self.fMRIFullView.create_view(right_layout, self.experiment_data)
 
+        if config.PLUGIN_EEG_ACTIVE:
+            eeg_label = QLabel("EEG Data")
+            eeg_label.setFont(QtGui.QFont("Times", 16, QtGui.QFont.Bold))
+            right_layout.addWidget(eeg_label)
+
+            eeg_label_layout = QHBoxLayout()
+            eeg_plot_layout = QHBoxLayout()
+
+            self.eegView.create_view(eeg_label_layout, eeg_plot_layout, self.experiment_data['participant'])
+
         right_layout.addStretch(1)
 
         return right_layout
@@ -208,6 +220,10 @@ class DataView(QWidget):
 
             # eye-tracking data
             self.eyetrackingView.setTime(self.time)
+
+            # eeg data
+            self.eegView.update_text(self.condition_dataframe['eeg'][self.time])
+            self.eegView.update_plot(self.time)
 
             # fMRI data
             current_scan = math.floor(((self.condition_start_pos + self.time) / 100) * config.FMRI_RESOLUTION)
