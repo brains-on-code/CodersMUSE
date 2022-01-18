@@ -11,7 +11,7 @@ matplotlib.use('Qt5Agg')
 import pandas as pd
 from PySide2 import QtWidgets, QtCore
 from PySide2.QtGui import QIcon
-from PySide2.QtWidgets import (QAction, qApp, QApplication, QMainWindow, QMessageBox)
+from PySide2.QtWidgets import (QAction, QApplication, QMainWindow, QMessageBox)
 
 from codersmuse.plugins.behavioral import BehavioralView
 from codersmuse.plugins.eyetracking import EyeTrackingData
@@ -68,8 +68,6 @@ class MainWindow(QMainWindow):
         about_menu = self.menuBar().addMenu("About")
         about_tool_action = QAction("Tool Information", self, triggered=self.about_tool)
         about_menu.addAction(about_tool_action)
-        about_qt_action = QAction("About Qt", self, triggered=qApp.aboutQt)
-        about_menu.addAction(about_qt_action)
 
     def select_open_file(self):
         behavioral_data_file = QtWidgets.QFileDialog.getOpenFileName(self, "Open Behavioral File", QtCore.QDir.currentPath(), "CSV Files (*.csv)")[0]
