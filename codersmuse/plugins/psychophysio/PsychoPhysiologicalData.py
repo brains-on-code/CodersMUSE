@@ -5,7 +5,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy
 
-OVERWRITE_PHYSIO_PLOTS = True
+OVERWRITE_PHYSIO_PLOTS = False
 
 width = 6
 height = 3

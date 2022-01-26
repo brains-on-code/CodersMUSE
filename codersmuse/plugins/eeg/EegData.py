@@ -1,11 +1,16 @@
 import logging
+import math
 import os
 
 import matplotlib
 import matplotlib.pyplot as plt
+matplotlib.use('Agg')
+
+import mne
 import numpy
 
-OVERWRITE_EEG_PLOTS = True
+OVERWRITE_EEG_PLOTS = False
+FULL_PREPROCESSING = True
 
 width = 6
 height = 3
@@ -15,30 +20,47 @@ matplotlib.rcParams.update({'font.size': 8})
 
 
 def preprocess_eeg_data(experiment_data):
-    # split experiment data by condition
-    for i, condition in enumerate(experiment_data['conditions']):
-        condition_dataframe = experiment_data['dataframe'][experiment_data['dataframe']['Condition'] == condition]
+    if FULL_PREPROCESSING:
+        eeg_data = mne.io.read_raw_fif(fname=experiment_data['fif_path'], preload=True)
+        print(eeg_data)
+        print(eeg_data.info)
 
-        # print(condition_dataframe.head(5))
+        print("nr of eeg frames: " + str(eeg_data.n_times))
+        print("in sec: " + str(eeg_data.n_times / eeg_data.info['sfreq']))
 
-        logging.info('Preprocessing eeg data for condition: %s', condition)
+        if OVERWRITE_EEG_PLOTS:
+            for i in range(math.ceil(eeg_data.n_times / eeg_data.info['sfreq'])):
+                output_file_cond = os.path.join(os.path.dirname(__file__), '..', '..', 'temp', 'eeg', experiment_data['participant'] + '_eeg_' + str(i) + '.png')
 
-        # TODO check whether files already exist and whether to overwrite them
-        if not OVERWRITE_EEG_PLOTS:
-            logging.info('--> use preprocessed files')
-            continue
+                # TODO make the cut slice configurable directly from the UI
+                if OVERWRITE_EEG_PLOTS or not os.path.exists(output_file_cond):
+                    plt = mne.viz.plot_raw(eeg_data, start=i, duration=5, show_scalebars=False, show_scrollbars=False, scalings='auto', n_channels=12)
+                    plt.savefig(output_file_cond, bbox_inches='tight')
+    else:
+        # split experiment data by condition
+        for i, condition in enumerate(experiment_data['conditions']):
+            condition_dataframe = experiment_data['dataframe'][experiment_data['dataframe']['Condition'] == condition]
 
-        # cycle through all physio data types
-        condition_start_pos = condition_dataframe['Time'].iloc[0]
-        condition_end_pos = condition_dataframe['Time'].iloc[-1]
-        condition_dataframe.reset_index(inplace=True, drop=True)
+            # print(condition_dataframe.head(5))
 
-        draw_eeg_data(experiment_data, condition_start_pos, condition_end_pos)
+            logging.info('Preprocessing eeg data for condition: %s', condition)
 
-        # todo change code in other places to use preprocessed pngs
+            # TODO check whether files already exist and whether to overwrite them
+            if not OVERWRITE_EEG_PLOTS:
+                logging.info('--> use preprocessed files')
+                continue
+
+            # cycle through all physio data types
+            condition_start_pos = condition_dataframe['Time'].iloc[0]
+            condition_end_pos = condition_dataframe['Time'].iloc[-1]
+            condition_dataframe.reset_index(inplace=True, drop=True)
+
+            draw_eeg_data_matplot(experiment_data, condition_start_pos, condition_end_pos)
+
+            # todo change code in other places to use preprocessed pngs
 
 
-def draw_eeg_data(experiment_data, start_pos, end_pos, span=1200, highlight_span=50, full_plot=False):
+def draw_eeg_data_matplot(experiment_data, start_pos, end_pos, span=1200, highlight_span=50, full_plot=False):
     eeg_data = experiment_data['dataframe']['eeg']
 
     plt.figure(figsize=(width, height), dpi=dpi)

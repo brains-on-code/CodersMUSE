@@ -39,6 +39,8 @@ class MainWindow(QMainWindow):
                 eyetracking_file=os.path.join(os.path.dirname(__file__), '..', 'sample', 'data', 'p01_eyetracking.csv'),
                 physio_file=os.path.join(os.path.dirname(__file__), '..', 'sample', 'data', 'p01_physio.csv'),
                 eeg_file=os.path.join(os.path.dirname(__file__), '..', 'sample', 'data', 'p01_eeg.csv'),  # TODO change to real EEG data once available
+                fif_file=os.path.join(os.path.dirname(__file__), '..', 'sample', 'data', 'p01.fif'),  # TODO change to real EEG data once available
+                #fif_file=os.path.join(os.path.dirname(__file__), '..', 'sample', 'data', 'p01_raw.fif'),  # TODO change to real EEG data once available
                 fmri_roi_file=os.path.join(os.path.dirname(__file__), '..', 'sample', 'data', 'p01_roi.csv'),
                 fmri_nifti_file=os.path.join(os.path.dirname(__file__), '..', 'sample', 'data', 'p01.nii')
             )
@@ -111,7 +113,7 @@ class MainWindow(QMainWindow):
                                           "Open Data File",
                                           "Cannot read file %s:\n%s." % (selected_file, in_file.errorString()))
 
-    def prepare_and_display_data(self, behavioral_file, eyetracking_file, physio_file, eeg_file, fmri_roi_file, fmri_nifti_file, participant='p01'):
+    def prepare_and_display_data(self, behavioral_file, eyetracking_file, physio_file, eeg_file, fif_file, fmri_roi_file, fmri_nifti_file, participant='p01'):
         # TODO allow optional data files
         # merge csv files into one dataframe
         df_behavioral = pd.read_csv(behavioral_file, sep=',')
@@ -131,6 +133,7 @@ class MainWindow(QMainWindow):
             'dataframe': df_merged,
             'fmri': pd.read_csv(fmri_roi_file, sep=';'),
             'nifti_path': fmri_nifti_file,
+            'fif_path': fif_file,
             'conditions': None,
             'responses': {}
         }
@@ -186,4 +189,4 @@ if __name__ == "__main__":
     mainWin.setWindowIcon(QIcon(os.path.join(os.path.dirname(__file__), 'images', 'icon_brain.png')))
     mainWin.show()
 
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

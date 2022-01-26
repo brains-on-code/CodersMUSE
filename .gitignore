@@ -1,6 +1,7 @@
 # Custom
 .idea/
 *.nii
+*.fif
 /codersmuse/temp/*
 
 # Byte-compiled / optimized / DLL files

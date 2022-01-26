@@ -3,6 +3,7 @@ import os
 
 from PySide6 import QtWidgets, QtGui
 from PySide6.QtGui import QPixmap, QColor
+from PySide6.QtOpenGLWidgets import QOpenGLWidget
 from PySide6.QtWidgets import QLabel
 
 from codersmuse import config
@@ -28,9 +29,9 @@ class EyeTrackingView(QtWidgets.QWidget):
         self.eyetracking_overlay.setTime(time)
 
 
-class EyeTrackingOverlay(QtWidgets.QWidget):
+class EyeTrackingOverlay(QOpenGLWidget):
     def __init__(self, main_window):
-        QtWidgets.QWidget.__init__(self, main_window)
+        QOpenGLWidget.__init__(self, main_window)
 
         self.condition_dataframe = None
         self.image = None

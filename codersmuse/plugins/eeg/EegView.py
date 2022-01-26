@@ -1,3 +1,4 @@
+import math
 import os
 
 from PySide6 import QtGui
@@ -18,7 +19,8 @@ class EegView:
         self.title.setFont(QtGui.QFont("Times", 14, QtGui.QFont.Normal))
         label_layout.addWidget(self.title)
 
-        path = os.path.join('temp', 'eeg', participant + '_' + self.data_type + '_0.png')
+        path = os.path.join('temp', 'eeg', participant + '_eeg_' + '0.png')
+        print("eeg link: " + path)
         self.plot.setPixmap(QtGui.QPixmap(path))
         self.plot.show()
 
@@ -28,6 +30,7 @@ class EegView:
         self.title.setText(self.data_type_readable + ': ' + str(value).zfill(4))
 
     def update_plot(self, time):
-        path = os.path.join('temp', 'eeg', self.participant + '_' + self.data_type + '_' + str(int(round(time, -2))) + '.png')
+        path = os.path.join('temp', 'eeg', self.participant + '_eeg_' + str(math.floor(time/100)) + '.png')
+        print("eeg data, showing frame: " + path)
         self.plot.setPixmap(QtGui.QPixmap(path))
         self.plot.show()

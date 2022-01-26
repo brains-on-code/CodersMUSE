@@ -144,12 +144,14 @@ class DataView(QWidget):
         if config.PLUGIN_EEG_ACTIVE:
             eeg_label = QLabel("EEG Data")
             eeg_label.setFont(QtGui.QFont("Times", 16, QtGui.QFont.Bold))
-            right_layout.addWidget(eeg_label)
 
             eeg_label_layout = QHBoxLayout()
             eeg_plot_layout = QHBoxLayout()
 
             self.eegView.create_view(eeg_label_layout, eeg_plot_layout, self.experiment_data['participant'])
+
+            right_layout.addWidget(eeg_label)
+            right_layout.addLayout(eeg_plot_layout)
 
         right_layout.addStretch(1)
 
@@ -178,8 +180,11 @@ class DataView(QWidget):
         self.timeLabel.setText("0:00.00 / 0:" + str(self.maximum_time_sec).zfill(2) + "." + str(self.maximum_time_msec).zfill(2))
 
         # update plug-in views
-        self.behavioralView.update_view(self.experiment_data, selected_condition, self.condition_start_pos)
-        self.eyetrackingView.setConditionDataframe(selected_condition, self.condition_dataframe)
+        if config.PLUGIN_BEHAVORIAL_ACTIVE:
+            self.behavioralView.update_view(self.experiment_data, selected_condition, self.condition_start_pos)
+
+        if config.PLUGIN_EYETRACKING_ACTIVE:
+            self.eyetrackingView.setConditionDataframe(selected_condition, self.condition_dataframe)
 
         self.update_data()
 
@@ -205,21 +210,23 @@ class DataView(QWidget):
             self.slider.setValue(self.time)
             self.timeLabel.setText("0:" + str(math.floor(self.time / 100)).zfill(2) + "." + str(self.time % 100).zfill(2) + " / 0:" + str(self.maximum_time_sec).zfill(2) + "." + str(self.maximum_time_msec).zfill(2))
 
-            # psycho-physiological data
-            if force_update or self.time % 10 == 0:
-                self.physioRespiration.update_text(self.condition_dataframe['Respiration'][self.time])
-                self.physioHeartRate.update_text(self.condition_dataframe['HeartRate'][self.time])
-                self.physioPupilDilation.update_text(self.condition_dataframe['PupilDilation'][self.time])
+            if config.PLUGIN_PHYSIO_ACTIVE:
+                # psycho-physiological data
+                if force_update or self.time % 10 == 0:
+                    self.physioRespiration.update_text(self.condition_dataframe['Respiration'][self.time])
+                    self.physioHeartRate.update_text(self.condition_dataframe['HeartRate'][self.time])
+                    self.physioPupilDilation.update_text(self.condition_dataframe['PupilDilation'][self.time])
 
-            # only update plots every second instead of every millisecond (for performance)
-            # use preprocessed plots and just switch image for faster speeds
-            if force_update or self.time % 100 == 0:
-                self.physioRespiration.update_plot(self.time)
-                self.physioHeartRate.update_plot(self.time)
-                self.physioPupilDilation.update_plot(self.time)
+                # only update plots every second instead of every millisecond (for performance)
+                # use preprocessed plots and just switch image for faster speeds
+                if force_update or self.time % 100 == 0:
+                    self.physioRespiration.update_plot(self.time)
+                    self.physioHeartRate.update_plot(self.time)
+                    self.physioPupilDilation.update_plot(self.time)
 
-            # eye-tracking data
-            self.eyetrackingView.setTime(self.time)
+            if config.PLUGIN_EYETRACKING_ACTIVE:
+                # eye-tracking data
+                self.eyetrackingView.setTime(self.time)
 
             # eeg data
             if config.PLUGIN_EEG_ACTIVE:
@@ -227,21 +234,16 @@ class DataView(QWidget):
                 self.eegView.update_plot(self.time)
 
             # fMRI data
-            current_scan = math.floor(((self.condition_start_pos + self.time) / 100) * config.FMRI_RESOLUTION)
-            shifted_scan = current_scan + SHIFT_FMRI_SCAN
+            if config.PLUGIN_FMRI_ACTIVE:
+                current_scan = math.floor(((self.condition_start_pos + self.time) / 100) * config.FMRI_RESOLUTION)
+                shifted_scan = current_scan + SHIFT_FMRI_SCAN
 
-            if self.shifted_scan != shifted_scan:
-                self.fMRIRoiView.update_data(self.experiment_data, current_scan)
-                self.fMRIFullView.update_data(self.experiment_data, shifted_scan)
+                if self.shifted_scan != shifted_scan:
+                    self.fMRIRoiView.update_data(self.experiment_data, current_scan)
+                    self.fMRIFullView.update_data(self.experiment_data, shifted_scan)
 
-                self.shifted_scan = shifted_scan
+                    self.shifted_scan = shifted_scan
 
             # todo: it should only add 1ms per tick, for now artificially jump a few ms to fix slow replay time
             self.time += 4  # my Macbook is really slow
             # self.time += 2  # windows PC is faster
-
-    def dialog(self):
-        msg_box = QMessageBox()
-        msg_box.setText("Not supported yet.")
-        msg_box.setStandardButtons(QMessageBox.Ok)
-        msg_box.exec_()

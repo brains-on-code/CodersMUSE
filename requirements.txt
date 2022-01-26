@@ -1,6 +1,7 @@
 nilearn
 pandas
 matplotlib
+mne
 nibabel
 numpy
 scipy
