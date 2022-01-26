@@ -1,4 +1,5 @@
 WINDOW_WIDTH = 1500
+TEMPORAL_RESOLUTION = 250
 
 PLUGIN_BEHAVORIAL_ACTIVE = False
 PLUGIN_EYETRACKING_ACTIVE = True
@@ -7,7 +8,7 @@ PLUGIN_FMRI_ACTIVE = False  # Set to True
 PLUGIN_EEG_ACTIVE = True  # Set to False
 
 EYETRACKING_DRAW_MODE = 'saccades'  # alternatively, use 'gazepath'
-EYETRACKING_LENGTH_TRACE = 150  # in milliseconds
+EYETRACKING_LENGTH_TRACE = 30  # in milliseconds if TEMPORAL_RESOLUTION=100
 
 FMRI_RESOLUTION = 0.5  # in scans per second
 FMRI_DELAY = 6  # assumed haemodynamic response delay in seconds

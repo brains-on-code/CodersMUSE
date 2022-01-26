@@ -7,6 +7,7 @@ import matplotlib
 
 # Make sure that we are using QT5 for matplotlibs
 #matplotlib.use('Qt5Agg')
+import numpy as np
 
 import pandas as pd
 from PySide6 import QtWidgets, QtCore
@@ -14,7 +15,7 @@ from PySide6.QtGui import (QAction, QIcon)
 from PySide6.QtWidgets import (QApplication, QMainWindow, QMessageBox)
 
 from codersmuse.plugins.behavioral import BehavioralView
-from codersmuse.plugins.eyetracking import EyeTrackingData
+from codersmuse.plugins.eyetracking import EyeTrackingData, i2mc
 from codersmuse.plugins.eeg import EegData
 from codersmuse.plugins.fmri import fMRIData
 from codersmuse.plugins.psychophysio import PsychoPhysiologicalData
@@ -34,13 +35,21 @@ class MainWindow(QMainWindow):
         self.setup_menubar()
 
         if OPEN_SAMPLE_DATA_ON_START:
+            self.open_sample_data()
+
+    def open_sample_data(self):
+        if True:
+            self.prepare_and_display_data_dagstuhl(
+                eyetracking_file=os.path.join(os.path.dirname(__file__), '..', 'sample', 'data', 'p02_eyetracking.csv'),
+                eeg_file=os.path.join(os.path.dirname(__file__), '..', 'sample', 'data', 'p02_raw.fif'),
+            )
+        else:
             self.prepare_and_display_data(
                 behavioral_file=os.path.join(os.path.dirname(__file__), '..', 'sample', 'data', 'p01_behavioral.csv'),
                 eyetracking_file=os.path.join(os.path.dirname(__file__), '..', 'sample', 'data', 'p01_eyetracking.csv'),
                 physio_file=os.path.join(os.path.dirname(__file__), '..', 'sample', 'data', 'p01_physio.csv'),
                 eeg_file=os.path.join(os.path.dirname(__file__), '..', 'sample', 'data', 'p01_eeg.csv'),  # TODO change to real EEG data once available
                 fif_file=os.path.join(os.path.dirname(__file__), '..', 'sample', 'data', 'p01.fif'),  # TODO change to real EEG data once available
-                #fif_file=os.path.join(os.path.dirname(__file__), '..', 'sample', 'data', 'p01_raw.fif'),  # TODO change to real EEG data once available
                 fmri_roi_file=os.path.join(os.path.dirname(__file__), '..', 'sample', 'data', 'p01_roi.csv'),
                 fmri_nifti_file=os.path.join(os.path.dirname(__file__), '..', 'sample', 'data', 'p01.nii')
             )
@@ -54,20 +63,27 @@ class MainWindow(QMainWindow):
                                  shortcut=QtCore.Qt.CTRL + QtCore.Qt.Key_O,
                                  triggered=self.select_open_file)
         experiment_menu.addAction(self.open_data)
+
+        self.open_dagstuhl_data = QAction(brain_icon,
+                                 "Open Dagstuhl Data",
+                                 self,
+                                 triggered=self.select_open_file_dagstuhl)
+        experiment_menu.addAction(self.open_dagstuhl_data)
+
         self.show_sample_data = QAction(brain_icon,
                                         "Show Sample Data",
                                         self,
                                         shortcut=QtCore.Qt.CTRL + QtCore.Qt.Key_T,
-                                        triggered=self.prepare_and_display_data)
+                                        triggered=self.open_sample_data)
         experiment_menu.addAction(self.show_sample_data)
 
         settings_action = QAction("Settings", self, triggered=self.settings)
         experiment_menu.addAction(settings_action)
 
         # TODO fix the icon on windows/mac
-        exit_action = QAction(QIcon.fromTheme("application-exit"), "Exit",
-                              self, shortcut=QtCore.Qt.CTRL + QtCore.Qt.Key_Q, triggered=self.close)
-        experiment_menu.addAction(exit_action)
+        #exit_action = QAction(QIcon.fromTheme("application-exit"), "Exit",
+        #                      self, shortcut=QtCore.Qt.CTRL + QtCore.Qt.Key_Q, triggered=self.close)
+        #experiment_menu.addAction(exit_action)
 
         about_menu = self.menuBar().addMenu("About")
         about_tool_action = QAction("Tool Information", self, triggered=self.about_tool)
@@ -106,12 +122,84 @@ class MainWindow(QMainWindow):
 
         self.prepare_and_display_data(behavioral_data_file, eyetracking_data_file, physio_data_file, eeg_file, fmri_roi_file, fmri_nifti_file)
 
+    def select_open_file_dagstuhl(self):
+        eyetracking_data_file = QtWidgets.QFileDialog.getOpenFileName(self, "Open Eye-Tracking File", QtCore.QDir.currentPath(), "CSV File (*.csv)")[0]
+        if not eyetracking_data_file:
+            return
+        self.check_file(eyetracking_data_file)
+
+        eeg_file = QtWidgets.QFileDialog.getOpenFileName(self, "Open EEG File", QtCore.QDir.currentPath(), "EEG File (*.fif)")[0]
+        if not eeg_file:
+            return
+        self.check_file(eeg_file)
+
+        self.prepare_and_display_data_dagstuhl(eyetracking_data_file, eeg_file)
+
     def check_file(self, selected_file):
         in_file = QtCore.QFile(selected_file)
         if not in_file.open(QtCore.QFile.ReadOnly | QtCore.QFile.Text):
             QtWidgets.QMessageBox.warning(self,
                                           "Open Data File",
                                           "Cannot read file %s:\n%s." % (selected_file, in_file.errorString()))
+
+    def prepare_and_display_data_dagstuhl(self, eyetracking_file, eeg_file, participant='DagstuhlUser'):
+        # TODO allow optional data files
+        # merge csv files into one dataframe
+        df_eyetracking = pd.read_csv(eyetracking_file, sep=',')
+        df_eyetracking = df_eyetracking.drop(columns=["l_gaze_point_in_user_coordinate_system_x",
+                                                      "l_gaze_point_in_user_coordinate_system_y",
+                                                      "l_gaze_point_in_user_coordinate_system_z",
+                                                      "r_gaze_point_in_user_coordinate_system_x",
+                                                      "r_gaze_point_in_user_coordinate_system_y",
+                                                      "r_gaze_point_in_user_coordinate_system_z",
+                                                      "l_gaze_origin_in_user_coordinate_system_x",
+                                                      "l_gaze_origin_in_user_coordinate_system_y",
+                                                      "l_gaze_origin_in_user_coordinate_system_z",
+                                                      "r_gaze_origin_in_user_coordinate_system_x",
+                                                      "r_gaze_origin_in_user_coordinate_system_y",
+                                                      "r_gaze_origin_in_user_coordinate_system_z"])
+
+        df_eyetracking['EyeTracking_X'] = df_eyetracking.apply(lambda row: 1920 * row['l_display_x'], axis=1)
+        df_eyetracking['EyeTracking_Y'] = df_eyetracking.apply(lambda row: 1080 * row['l_display_y'], axis=1)
+
+        df_eyetracking['Time'] = np.arange(df_eyetracking.shape[0])
+        df_eyetracking['Condition'] = 'Task1'
+        df_eyetracking['Gaze'] = '0'
+
+        print(df_eyetracking.head(5))
+
+        print('classifying eye-tracking data')
+        df_eyetracking["time"] = df_eyetracking["time"].astype(float) * 1000.0  # don't move this, necessary for i2mc
+        fix, data, par = i2mc.classify_data(df_eyetracking)
+        print('classifying eye-tracking data done')
+
+        for i in range(len(fix['startT'])):
+            start_time = fix['startT'][i]
+            end_time = fix['endT'][i]
+
+            # todo assign fixation to real data
+            #df_eyetracking[df_eyetracking.loc[(df_eyetracking['time'] > start_time) & (df_eyetracking['time'] < end_time)]]['Gaze'] = 1
+
+            #print('assigning rows a fixation ' + str(len(df_eyetracking_current)))
+            #df_eyetracking_current
+            #df_eyetracking_current['EyeTracking_X'] = fix['xpos'][i]
+            #df_eyetracking_current['EyeTracking_Y'] = fix['ypos'][i]
+
+        # TODO change both input csv files to , separated files
+        self.experiment_data = {
+            'participant': participant,
+            'dataframe': df_eyetracking,
+            'fmri': None,
+            'nifti_path': None,
+            'fif_path': eeg_file,
+            'conditions': None,
+            'responses': {}
+        }
+
+        # figure out a list of conditions
+        self.experiment_data['conditions'] = ['Task1']
+
+        self.initialize_view()
 
     def prepare_and_display_data(self, behavioral_file, eyetracking_file, physio_file, eeg_file, fif_file, fmri_roi_file, fmri_nifti_file, participant='p01'):
         # TODO allow optional data files
@@ -141,12 +229,16 @@ class MainWindow(QMainWindow):
         # figure out a list of conditions
         self.experiment_data['conditions'] = self.experiment_data['dataframe']['Condition'].unique()
 
+        self.initialize_view()
+
+    def initialize_view(self):
         # clean & preprocess eye-tracking/physio/fMRI data
         if config.PLUGIN_BEHAVORIAL_ACTIVE:
             BehavioralView.BehavioralView().clean_behavioral_data(self.experiment_data)
 
         if config.PLUGIN_EYETRACKING_ACTIVE:
             EyeTrackingData.clean_eyetracking_data(self.experiment_data)
+
 
         if config.PLUGIN_PHYSIO_ACTIVE:
             PsychoPhysiologicalData.preprocess_psychophysio_data(self.experiment_data)
@@ -185,7 +277,7 @@ if __name__ == "__main__":
 
     mainWin.resize(config.WINDOW_WIDTH, config.WINDOW_WIDTH * 0.6)
 
-    mainWin.setWindowTitle('CodersMUSE (fMRI and Eye-Tracking Data Exploration Tool) | v0.1.0')
+    mainWin.setWindowTitle('CodersMUSE (fMRI and Eye-Tracking Data Exploration Tool) | v0.3.0')
     mainWin.setWindowIcon(QIcon(os.path.join(os.path.dirname(__file__), 'images', 'icon_brain.png')))
     mainWin.show()
 

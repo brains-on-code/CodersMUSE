@@ -1,9 +1,10 @@
-nilearn
-pandas
+I2MC
 matplotlib
 mne
 nibabel
+nilearn
 numpy
+PySide6
+pandas
 scipy
 sklearn
-PySide6

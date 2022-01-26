@@ -169,12 +169,12 @@ class DataView(QWidget):
         self.condition_end_pos = self.condition_dataframe['Time'].iloc[-1]
         self.condition_dataframe.reset_index(inplace=True, drop=True)
 
-        self.maximum_time_sec = math.floor(len(self.condition_dataframe) / 100)
-        self.maximum_time_msec = len(self.condition_dataframe) % 100
+        self.maximum_time_sec = math.floor(len(self.condition_dataframe) / config.TEMPORAL_RESOLUTION)
+        self.maximum_time_msec = len(self.condition_dataframe) % config.TEMPORAL_RESOLUTION
 
         self.time = 0
         self.shifted_scan = None
-        self.slider.setMaximum(self.maximum_time_sec * 100 + self.maximum_time_msec)
+        self.slider.setMaximum(self.maximum_time_sec * config.TEMPORAL_RESOLUTION + self.maximum_time_msec)
         self.slider.setValue(0)
 
         self.timeLabel.setText("0:00.00 / 0:" + str(self.maximum_time_sec).zfill(2) + "." + str(self.maximum_time_msec).zfill(2))
@@ -202,13 +202,13 @@ class DataView(QWidget):
 
     def update_data(self, force_update=False):
         # check if timer should stop
-        if self.time >= (self.maximum_time_sec * 100 + self.maximum_time_msec):
+        if self.time >= (self.maximum_time_sec * config.TEMPORAL_RESOLUTION + self.maximum_time_msec):
             self.timer.stop()
             self.isPlaying = False
             self.playButton.setText('Play')
         else:
             self.slider.setValue(self.time)
-            self.timeLabel.setText("0:" + str(math.floor(self.time / 100)).zfill(2) + "." + str(self.time % 100).zfill(2) + " / 0:" + str(self.maximum_time_sec).zfill(2) + "." + str(self.maximum_time_msec).zfill(2))
+            self.timeLabel.setText("0:" + str(math.floor(self.time / config.TEMPORAL_RESOLUTION)).zfill(2) + "." + str(self.time % config.TEMPORAL_RESOLUTION).zfill(2) + " / 0:" + str(self.maximum_time_sec).zfill(2) + "." + str(self.maximum_time_msec).zfill(2))
 
             if config.PLUGIN_PHYSIO_ACTIVE:
                 # psycho-physiological data
@@ -219,7 +219,7 @@ class DataView(QWidget):
 
                 # only update plots every second instead of every millisecond (for performance)
                 # use preprocessed plots and just switch image for faster speeds
-                if force_update or self.time % 100 == 0:
+                if force_update or self.time % config.TEMPORAL_RESOLUTION == 0:
                     self.physioRespiration.update_plot(self.time)
                     self.physioHeartRate.update_plot(self.time)
                     self.physioPupilDilation.update_plot(self.time)
@@ -230,7 +230,7 @@ class DataView(QWidget):
 
             # eeg data
             if config.PLUGIN_EEG_ACTIVE:
-                self.eegView.update_text(self.condition_dataframe['eeg'][self.time])
+                #self.eegView.update_text(self.condition_dataframe['eeg'][self.time])
                 self.eegView.update_plot(self.time)
 
             # fMRI data

@@ -4,6 +4,8 @@ import os
 from PySide6 import QtGui
 from PySide6.QtWidgets import QLabel
 
+from codersmuse import config
+
 
 class EegView:
     def __init__(self, data_type):
@@ -30,7 +32,7 @@ class EegView:
         self.title.setText(self.data_type_readable + ': ' + str(value).zfill(4))
 
     def update_plot(self, time):
-        path = os.path.join('temp', 'eeg', self.participant + '_eeg_' + str(math.floor(time/100)) + '.png')
-        print("eeg data, showing frame: " + path)
+        path = os.path.join('temp', 'eeg', self.participant + '_eeg_' + str(math.floor(time/config.TEMPORAL_RESOLUTION)) + '.png')
+        #print("eeg data, showing frame: " + path)
         self.plot.setPixmap(QtGui.QPixmap(path))
         self.plot.show()
