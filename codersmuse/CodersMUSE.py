@@ -22,7 +22,7 @@ from codersmuse.plugins.psychophysio import PsychoPhysiologicalData
 from codersmuse.DataExplorationView import DataView
 from codersmuse import config
 
-OPEN_SAMPLE_DATA_ON_START = True
+OPEN_SAMPLE_DATA_ON_START = False
 
 # logging.basicConfig(filename='example.log', filemode='w', level=logging.DEBUG)
 logging.basicConfig(level=logging.INFO)
@@ -177,13 +177,9 @@ class MainWindow(QMainWindow):
             start_time = fix['startT'][i]
             end_time = fix['endT'][i]
 
-            # todo assign fixation to real data
-            #df_eyetracking[df_eyetracking.loc[(df_eyetracking['time'] > start_time) & (df_eyetracking['time'] < end_time)]]['Gaze'] = 1
-
-            #print('assigning rows a fixation ' + str(len(df_eyetracking_current)))
-            #df_eyetracking_current
-            #df_eyetracking_current['EyeTracking_X'] = fix['xpos'][i]
-            #df_eyetracking_current['EyeTracking_Y'] = fix['ypos'][i]
+            df_eyetracking.loc[(df_eyetracking['time'] > start_time) & (df_eyetracking['time'] < end_time), 'Gaze'] = 1
+            df_eyetracking.loc[(df_eyetracking['EyeTracking_X'] > start_time) & (df_eyetracking['time'] < end_time), 'Gaze'] = fix['xpos'][i]
+            df_eyetracking.loc[(df_eyetracking['EyeTracking_Y'] > start_time) & (df_eyetracking['time'] < end_time), 'Gaze'] = fix['ypos'][i]
 
         # TODO change both input csv files to , separated files
         self.experiment_data = {

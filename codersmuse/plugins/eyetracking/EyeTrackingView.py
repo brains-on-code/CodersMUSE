@@ -42,8 +42,8 @@ class EyeTrackingOverlay(QOpenGLWidget):
         self.main_window = main_window
 
     def setImage(self, parent, imagePath):
-        calculated_width = config.WINDOW_WIDTH * 0.6
-        calculated_height = config.WINDOW_WIDTH * 0.6 * 0.5625  # for MRI: 0.75
+        calculated_width = config.WINDOW_WIDTH * config.EYETRACKING_WIDTH
+        calculated_height = config.WINDOW_WIDTH * config.EYETRACKING_WIDTH * 0.5625  # for MRI: 0.75
 
         logging.debug('eyetracking view: window width: %s', config.WINDOW_WIDTH)
         logging.debug('eyetracking view: calculated image width: %s', calculated_width)
