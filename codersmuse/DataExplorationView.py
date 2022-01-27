@@ -105,7 +105,7 @@ class DataView(QWidget):
         self.isPlaying = False
 
         bottomLayout.addStretch()
-        bottomLayout.addWidget(self.playButton)
+        #bottomLayout.addWidget(self.playButton)
         playerLayout = QVBoxLayout()
         timeLayout = QHBoxLayout()
         timeLayout.addStretch()

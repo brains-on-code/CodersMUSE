@@ -19,7 +19,8 @@ Currently supported modalities are:
 * behavioral data (response time, click time, correctness)
 * eye tracking
 * psycho-physiological data (heart rate, respiration)
-* fMRI data (via nipy)
+* fMRI data (via `nipy`)
+* EEG data (via `mne`)
 
 For more information, see the paper or watch the video below. Keep in mind that this is an early prototype and not a mature tool.
 

@@ -2,11 +2,8 @@
 import logging
 import os
 import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import matplotlib
-
-# Make sure that we are using QT5 for matplotlibs
-#matplotlib.use('Qt5Agg')
 import numpy as np
 
 import pandas as pd

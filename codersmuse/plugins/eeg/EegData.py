@@ -9,7 +9,7 @@ matplotlib.use('Agg')
 import mne
 import numpy
 
-OVERWRITE_EEG_PLOTS = False
+OVERWRITE_EEG_PLOTS = True
 FULL_PREPROCESSING = True
 
 width = 6
@@ -34,8 +34,8 @@ def preprocess_eeg_data(experiment_data):
 
                 # TODO make the cut slice configurable directly from the UI
                 if OVERWRITE_EEG_PLOTS or not os.path.exists(output_file_cond):
-                    plt = mne.viz.plot_raw(eeg_data, start=i, duration=5, show_scalebars=False, show_scrollbars=False, scalings='auto', n_channels=12)
-                    plt.savefig(output_file_cond, bbox_inches='tight')
+                    output_fig = mne.viz.plot_raw(eeg_data, start=i, duration=5, show_scalebars=False, show_scrollbars=False, scalings='auto', n_channels=18, use_opengl=True)
+                    output_fig.savefig(output_file_cond, bbox_inches='tight')
     else:
         # split experiment data by condition
         for i, condition in enumerate(experiment_data['conditions']):
