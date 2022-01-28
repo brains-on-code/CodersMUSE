@@ -140,7 +140,60 @@ class MainWindow(QMainWindow):
                                           "Cannot read file %s:\n%s." % (selected_file, in_file.errorString()))
 
     def prepare_and_display_data_dagstuhl(self, eyetracking_file, eeg_file, participant='DagstuhlUser'):
-        # TODO allow optional data files
+        # merge csv files into one dataframe
+        column_names = ["l_valid", "r_valid", 'l_display', 'r_display', 'time', 'l_pupil', 'r_pupil']
+        df_eyetracking = pd.read_csv(eyetracking_file, sep=';', header=None, names=column_names)
+
+        df_eyetracking['l_display_x'] = df_eyetracking.apply(lambda row: str(row['l_display']).replace('(', '').split(',')[0], axis=1)
+        df_eyetracking['l_display_y'] = df_eyetracking.apply(lambda row: str(row['l_display']).replace(')', '').split(',')[1], axis=1)
+        df_eyetracking['r_display_x'] = df_eyetracking.apply(lambda row: str(row['r_display']).replace('(', '').split(',')[0], axis=1)
+        df_eyetracking['r_display_y'] = df_eyetracking.apply(lambda row: str(row['r_display']).replace(')', '').split(',')[1], axis=1)
+
+        df_eyetracking["l_display_x"] = df_eyetracking["l_display_x"].astype(float)
+        df_eyetracking["l_display_y"] = df_eyetracking["l_display_y"].astype(float)
+        df_eyetracking["r_display_x"] = df_eyetracking["r_display_x"].astype(float)
+        df_eyetracking["r_display_y"] = df_eyetracking["r_display_y"].astype(float)
+
+        df_eyetracking['EyeTracking_X'] = df_eyetracking.apply(lambda row: 1920 * row['l_display_x'], axis=1)
+        df_eyetracking['EyeTracking_Y'] = df_eyetracking.apply(lambda row: 1080 * row['l_display_y'], axis=1)
+
+        first_frame = df_eyetracking['time'].iloc[0]
+        df_eyetracking['Time'] = df_eyetracking.apply(lambda row: (row['time'] - first_frame)/1000, axis=1)  #np.arange(df_eyetracking.shape[0])
+        df_eyetracking['Condition'] = 'Task1'
+        df_eyetracking['Gaze'] = '0'
+
+        print(df_eyetracking.head(5))
+
+        print('classifying eye-tracking data')
+        df_eyetracking["time"] = df_eyetracking["time"].astype(float) * 1000.0  # don't move this, necessary for i2mc
+        fix, data, par = i2mc.classify_data(df_eyetracking)
+        print('classifying eye-tracking data done')
+
+        for i in range(len(fix['startT'])):
+            start_time = fix['startT'][i]
+            end_time = fix['endT'][i]
+
+            df_eyetracking.loc[(df_eyetracking['time'] > start_time) & (df_eyetracking['time'] < end_time), 'Gaze'] = 1
+            df_eyetracking.loc[(df_eyetracking['time'] > start_time) & (df_eyetracking['time'] < end_time), 'EyeTracking_X'] = fix['xpos'][i]
+            df_eyetracking.loc[(df_eyetracking['time'] > start_time) & (df_eyetracking['time'] < end_time), 'EyeTracking_Y'] = fix['ypos'][i]
+
+        # TODO change both input csv files to , separated files
+        self.experiment_data = {
+            'participant': participant,
+            'dataframe': df_eyetracking,
+            'fmri': None,
+            'nifti_path': None,
+            'fif_path': eeg_file,
+            'conditions': None,
+            'responses': {}
+        }
+
+        # figure out a list of conditions
+        self.experiment_data['conditions'] = ['Task1']
+
+        self.initialize_view()
+
+    def prepare_and_display_data_dagstuhl_saar(self, eyetracking_file, eeg_file, participant='DagstuhlUser'):
         # merge csv files into one dataframe
         df_eyetracking = pd.read_csv(eyetracking_file, sep=',')
         df_eyetracking = df_eyetracking.drop(columns=["l_gaze_point_in_user_coordinate_system_x",
@@ -175,8 +228,8 @@ class MainWindow(QMainWindow):
             end_time = fix['endT'][i]
 
             df_eyetracking.loc[(df_eyetracking['time'] > start_time) & (df_eyetracking['time'] < end_time), 'Gaze'] = 1
-            df_eyetracking.loc[(df_eyetracking['EyeTracking_X'] > start_time) & (df_eyetracking['time'] < end_time), 'Gaze'] = fix['xpos'][i]
-            df_eyetracking.loc[(df_eyetracking['EyeTracking_Y'] > start_time) & (df_eyetracking['time'] < end_time), 'Gaze'] = fix['ypos'][i]
+            df_eyetracking.loc[(df_eyetracking['time'] > start_time) & (df_eyetracking['time'] < end_time), 'EyeTracking_X'] = fix['xpos'][i]
+            df_eyetracking.loc[(df_eyetracking['time'] > start_time) & (df_eyetracking['time'] < end_time), 'EyeTracking_Y'] = fix['ypos'][i]
 
         # TODO change both input csv files to , separated files
         self.experiment_data = {

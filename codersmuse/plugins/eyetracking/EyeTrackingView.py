@@ -2,7 +2,7 @@ import logging
 import os
 
 from PySide6 import QtWidgets, QtGui
-from PySide6.QtGui import QPixmap, QColor
+from PySide6.QtGui import QPixmap, QColor, Qt
 from PySide6.QtOpenGLWidgets import QOpenGLWidget
 from PySide6.QtWidgets import QLabel
 
@@ -53,7 +53,7 @@ class EyeTrackingOverlay(QOpenGLWidget):
         self.image = QPixmap(imagePath)
         original_size = self.image.size()
 
-        self.image = self.image.scaledToWidth(calculated_width)
+        self.image = self.image.scaledToWidth(calculated_width, Qt.SmoothTransformation)
         scaled_size = self.image.size()
 
         self.scale_factor = scaled_size.height() / original_size.height()
